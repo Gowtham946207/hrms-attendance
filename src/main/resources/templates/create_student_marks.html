@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Create Student Marks</title>
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<header>
+  Welcome to Magadh University
+</header>
+<main class="container">
+  <h1>Create Student Marks</h1>
+
+  <!-- Message Display -->
+  <div th:if="${message}" class="alert alert-success" role="alert">
+    <span th:text="${message}"></span>
+  </div>
+
+  <!-- Specifications -->
+  <section>
+    <h3>Specifications</h3>
+    <ul>
+      <li><strong>Internal Marks:</strong> Consist of three tests, of which the best score is considered.</li>
+      <li><strong>Final Exam Marks:</strong> Evaluated based on the end-term examination.</li>
+      <li><strong>Total Marks:</strong> Sum of best internal marks and final exam marks.</li>
+      <li><strong>Percentage:</strong> Calculated as: <code>(Total Marks / Maximum Marks) × 100</code>.</li>
+      <li><strong>Division:</strong> Classified as First, Second, or Third based on percentage.</li>
+    </ul>
+  </section>
+
+  <!-- Form -->
+  <form action="#" th:action="@{/student-marks/create}" th:object="${studentMarks}" method="post">
+    <div class="form-group">
+      <label for="student">Student</label>
+      <select class="form-control" id="student" name="studentId" th:field="*{studentId}" required>
+        <option th:each="student : ${students}" th:value="${student.studentId}" th:text="${student.name}"></option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="subjectId">Subject ID</label>
+      <input type="text" class="form-control" id="subjectId" name="subjectId" th:field="*{subjectId}" required>
+    </div>
+    <div class="form-group">
+      <label for="semester">Semester</label>
+      <input type="text" class="form-control" id="semester" name="semester" th:field="*{semester}" required>
+    </div>
+    <div class="form-group">
+      <label for="internal1">Internal 1</label>
+      <input type="number" class="form-control" id="internal1" name="internal1" th:field="*{internal1}" required onchange="updateGraph()">
+    </div>
+    <div class="form-group">
+      <label for="internal2">Internal 2</label>
+      <input type="number" class="form-control" id="internal2" name="internal2" th:field="*{internal2}" required onchange="updateGraph()">
+    </div>
+    <div class="form-group">
+      <label for="internal3">Internal 3</label>
+      <input type="number" class="form-control" id="internal3" name="internal3" th:field="*{internal3}" required onchange="updateGraph()">
+    </div>
+    <div class="form-group">
+      <label for="bestInternalMarks">Best Internal Marks</label>
+      <input type="number" class="form-control" id="bestInternalMarks" name="bestInternalMarks" th:field="*{bestInternalMarks}" readonly>
+    </div>
+    <div class="form-group">
+      <label for="finalExamMarks">Final Exam Marks</label>
+      <input type="number" class="form-control" id="finalExamMarks" name="finalExamMarks" th:field="*{finalExamMarks}" required onchange="updateGraph()">
+    </div>
+    <div class="form-group">
+      <label for="totalMarks">Total Marks</label>
+      <input type="number" class="form-control" id="totalMarks" name="totalMarks" th:field="*{totalMarks}" readonly>
+    </div>
+    <div class="form-group">
+      <label for="percentage">Percentage</label>
+      <input type="number" class="form-control" id="percentage" name="percentage" th:field="*{percentage}" readonly>
+    </div>
+    <div class="form-group">
+      <label for="division">Division</label>
+      <input type="text" class="form-control" id="division" name="division" th:field="*{division}" th:classappend="'division-' + ${division}" readonly>
+    </div>
+    <button type="submit" class="btn btn-primary">Create Student Marks</button>
+  </form>
+
+  <!-- Chart Visualization -->
+  <section>
+    <h3>Marks Distribution</h3>
+    <canvas id="marksChart" width="400" height="200"></canvas>
+  </section>
+</main>
+
+<script>
+  const ctx = document.getElementById('marksChart').getContext('2d');
+  const marksChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Internal 1', 'Internal 2', 'Internal 3', 'Final Exam'],
+      datasets: [{
+        label: 'Marks Distribution',
+        data: [0, 0, 0, 0], // Initial data
+        backgroundColor: [
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(153, 102, 255, 0.2)'
+        ],
+        borderColor: [
+          'rgba(75, 192, 192, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(153, 102, 255, 1)'
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  function updateGraph() {
+    // Get values from input fields
+    const internal1 = parseFloat(document.getElementById('internal1').value) || 0;
+    const internal2 = parseFloat(document.getElementById('internal2').value) || 0;
+    const internal3 = parseFloat(document.getElementById('internal3').value) || 0;
+    const finalExam = parseFloat(document.getElementById('finalExamMarks').value) || 0;
+
+    // Calculate best internal marks
+    const bestInternal = Math.max(internal1, internal2, internal3);
+    document.getElementById('bestInternalMarks').value = bestInternal;
+
+    // Update chart data
+    marksChart.data.datasets[0].data = [internal1, internal2, internal3, finalExam];
+    marksChart.update();
+  }
+</script>
+</body>
+</html>

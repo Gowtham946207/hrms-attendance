@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>View Performance Record</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<header>
+    <img src="/images/hrmslogo.png" alt="HRMS Logo" class="logo">
+    <span>Welcome to Magadh University</span>
+</header>
+<main>
+    <div class="container mt-5">
+        <h1>View Performance Record</h1>
+        <table class="table table-striped">
+            <tr>
+                <th>ID</th>
+                <td th:text="${performance.id}"></td>
+            </tr>
+            <tr>
+                <th>Employee ID</th>
+                <td th:text="${performance.employeeId}"></td>
+            </tr>
+            <tr>
+                <th>Date</th>
+                <td th:text="${performance.date}"></td>
+            </tr>
+            <tr>
+                <th>Details</th>
+                <td th:text="${performance.details}"></td>
+            </tr>
+            <tr>
+                <th>Rating</th>
+                <td th:text="${performance.rating}"></td>
+            </tr>
+        </table>
+        <a th:href="@{/performance/update/{id}(id=${performance.id})}" class="btn btn-primary">Edit</a>
+    </div>
+</main>
+<script src="/js/theme.js"></script>
+</body>
+</html>
